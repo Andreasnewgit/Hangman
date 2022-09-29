@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Data;
 using System.Text;
 
 namespace Hangman
 {
     class Program
     {
-        
+
         static void Main(string[] args)
         {
             string[] wordlist =
@@ -25,63 +26,72 @@ namespace Hangman
 
             // Randomly picks a word from the list and assigns it to var hangManWord
             Random random = new Random();
-            int wordListVerify = random.Next(0, wordlist.Length);
-            string hangManWord = wordlist[wordListVerify];
+            int wordListRandom = random.Next(0, wordlist.Length);
+            string hangManWord = wordlist[wordListRandom];
 
             Console.WriteLine(hangManWord);
 
             Console.WriteLine("The word has {0} characters", hangManWord.Length);
-
-            foreach (char x in hangManWord)
-            {
-                Console.Write("_");
-            }
-
+       
             // Attempts for guessing the correct word
-            int tenAttempts = 10;
-         
+            int gameGuesses = 10;
 
+            var letters = new List<string>();
             StringBuilder sb = new StringBuilder();
 
-            while (tenAttempts > 0)
+            while (gameGuesses > 0)
             {
-                Console.WriteLine("\nGuesses left: {0}", tenAttempts);
-            
-                // Gets user input and limits input to 1 character only
-                Console.Write("Enter a single letter: ");                           
-                char[] input = Console.ReadLine().ToCharArray();
-               
-                string guess = "";
-                if (input.Length > 0)
+                var charactersLeft = 0;
+                // loops through all characters in the word
+                foreach (var character in hangManWord)
                 {
-                    guess = input[0].ToString();
-                    guess = guess.ToLower();
-                }
-
-                if (hangManWord.Contains(guess))
-                {
-                    Console.WriteLine("Correct, this letter is in the word!", guess);
-                    char[] correctGuess = guess.ToCharArray();
-                    
-                    for (int i = 0; i < correctGuess.Length; i++)
+                    var letter = character.ToString();  
+                    if (letters.Contains(letter))
                     {
-                        Console.WriteLine(correctGuess[i]);
+                       Console.Write(letter);
+                    }
+                    else
+                    {
+                        Console.Write("_");
+                        charactersLeft++;
                     }
                 }
+                Console.WriteLine(String.Empty);
 
-                else
+                if (charactersLeft == 0)
                 {
-                    Console.WriteLine("The Letter {0} is not in the word", guess);
-
-                    sb.Append(guess);            
-                    String[] incorrectGuesses = sb.ToString().Split(",");
-                    for (int i = 0; i < sb.Length; i++)
-                        Console.Write(sb[i]);
-                 
-                    tenAttempts--;
+                    break;
                 }
-            }
-              endOfGameScreen(tenAttempts);
+
+                Console.WriteLine("Type in a letter or guess the whole word \n");
+
+                var key = Console.ReadLine().ToString().ToLower();
+                Console.WriteLine(string.Empty);
+                Console.WriteLine("Letters guessed so far: " + sb);               
+
+                if (letters.Contains(key))
+                {
+                    Console.WriteLine("Letter have already been entered");
+                    sb.Append(key);                  
+                    continue;
+                }
+                letters.Add(key);
+
+                if (!hangManWord.Contains(key))
+                {
+                    gameGuesses--;
+                    if(gameGuesses > 0)
+                    {
+                        Console.WriteLine($"The letter {key} is not in the word. " +
+                        $"You have {gameGuesses} guesses left.");
+                        sb.Append(key);                    
+                    }
+                    else
+                    {
+                        endOfGameScreen(gameGuesses);
+                    }
+                }           
+            }                  
         }
 
         private static void endOfGameScreen(int tenAttempts)
@@ -98,156 +108,8 @@ namespace Hangman
                 Console.WriteLine(" |");
                 Console.WriteLine(" |             RIP");
                 Console.WriteLine("_|_            HANGED");
-            }                           
+            }
         }
     }
 }
 
-
-
-
-//var runProgram = true;
-//while (runProgram)
-
-//{
-//    Console.WriteLine("Hangman Game Title \n");
-//    Console.WriteLine("Press 1 for + Addition");
-//    Console.WriteLine("Press 2 for - Subtraction");
-
-//    Console.WriteLine("Press 11 to stop playing");
-//    var userInput = Console.ReadLine();
-
-
-
-
-//    switch (userInput)
-//    {
-//        case "1":
-//            Console.WriteLine("    Hangman");
-//            Console.WriteLine(" _____________");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(@" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(@" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine("_|_");
-//            break;
-
-//        case "2":
-//            Console.WriteLine(" ______________");
-//            Console.WriteLine(" |/");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(@" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(@" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine("_|_");
-//            break;
-
-//        case "3":
-//            Console.WriteLine(" _______________");
-//            Console.WriteLine(" |/");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(@" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(@" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine("_|_");
-//            break;
-
-//        case "4":
-//            Console.WriteLine(" _______________");
-//            Console.WriteLine(" |/            |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(@" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(@" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine("_|_");
-//            break;
-
-//        case "5":
-//            Console.WriteLine(" _______________");
-//            Console.WriteLine(" |/            |");
-//            Console.WriteLine(" |             0");
-//            Console.WriteLine(@" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(@" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine("_|_");
-//            break;
-
-//        case "6":
-//            Console.WriteLine(" _______________");
-//            Console.WriteLine(" |/            |");
-//            Console.WriteLine(" |             0");
-//            Console.WriteLine(@" |            /");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(@" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine("_|_");
-//            break;
-
-//        case "7":
-//            Console.WriteLine(" _______________");
-//            Console.WriteLine(" |/            |");
-//            Console.WriteLine(" |             0");
-//            Console.WriteLine(@" |            /|");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(@" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(" |");
-//            Console.WriteLine("_|_");
-//            break;
-
-//        case "8":
-//            Console.WriteLine(" _______________");
-//Console.WriteLine(" |/            |");
-//Console.WriteLine(" |             0");
-//Console.WriteLine(@" |            /|\");
-//Console.WriteLine(" |");
-//Console.WriteLine(@" |");
-//Console.WriteLine(" |");
-//Console.WriteLine(" |");
-//Console.WriteLine("_|_");
-//break;
-
-//        case "9":
-//Console.WriteLine(" _______________");
-//Console.WriteLine(" |/            |");
-//Console.WriteLine(" |             0");
-//Console.WriteLine(@" |            /|\");
-//Console.WriteLine(" |             |");
-//Console.WriteLine(@" |             ");
-//Console.WriteLine(" |");
-//Console.WriteLine(" |             Last guess");
-//Console.WriteLine("_|_            Make it count");
-//break;
-
-//        case "10":
-//            Console.WriteLine(" _______________");
-//            Console.WriteLine(" |/            |");
-//            Console.WriteLine(" |             X");
-//            Console.WriteLine(@" |            /|\");
-//            Console.WriteLine(" |             |");
-//            Console.WriteLine(@" |             /\");
-//            Console.WriteLine(" |");
-//            Console.WriteLine(" |             RIP");
-//            Console.WriteLine("_|_            HANGED");
-//            break;
-
-
-//        case "11":
-//            runProgram = false;
-//            Console.WriteLine("Program have ended");
-
-//            break;
-//    }
-//}
